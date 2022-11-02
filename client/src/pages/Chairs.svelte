@@ -30,7 +30,9 @@
 <section>
 <ul id="chairs"{refreshChairs}>
     {#each chairs as chair}
-    <li id={chair.id} style="background-color: {chair.color}">{chair.name}</li>
+    <li id={chair.uuid} style="background-color: {chair.color}">{chair.name}
+        <button type="button" id="moreInfoButton">More info</button>
+    </li>
     {/each}
 </ul>
 </section>
@@ -43,7 +45,6 @@
         width: 100vw;
         display: flex;
         justify-content: center;
-        background-color: red;
     }
 
     #chairs{
@@ -55,8 +56,16 @@
         list-style: none;
     }
 
-    #chairs li{
+    #moreInfoButton{
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 33%;
 
+    }
+
+    #chairs li{
+        position: relative;
         margin: 10px;
         width: 200px;
         height: 200px;
