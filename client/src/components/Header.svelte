@@ -9,13 +9,15 @@
             <li><a class:active={active === "/"} href="/">Home</a></li>
             <li><a class:active={active === "/about"} href="/about">About</a></li>
             <li><a class:active={active === "/login"} href="/login">Login</a></li>
+            <li><a class:active={active === "/chairs"} href="/chairs">Chairs</a></li>
         </ul>
     </nav>
 </header>
 
 <style>
     ul {
-
+        display: flex;
+        flex-flow: column;
         margin: 0;
         padding: 0;
         list-style-type: none;

@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const checkToken = require("./authentication");
+const checkToken = require("../middleware/token_check");
 let chair_router = require("../data/chair_data")
 router.use(bodyParser.json());
 
-router.get('/',checkToken, (req, res) => {
-    //console.log(chair_router);
+router.get('/', (req, res) => {
+    console.log("In router");
     // res.send('Hello World!')
     const filters = req.query;
     let chairs = [];

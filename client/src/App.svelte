@@ -5,7 +5,9 @@
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
   import Login from "./pages/Login.svelte"
+  import Chairs from "./pages/Chairs.svelte"
   import Header from "./components/Header.svelte";
+
 
 
   let page;
@@ -22,6 +24,10 @@
   });
   router('/login', (ctx) => {
     page = Login;
+    currentRoute = ctx.pathname;
+  });
+  router('/chairs', (ctx) => {
+    page = Chairs;
     currentRoute = ctx.pathname;
   });
 
@@ -46,6 +52,7 @@
     margin: 0;
     padding: 0;
     height: 100vw;
+    overflow-x: hidden;
   }
 
 

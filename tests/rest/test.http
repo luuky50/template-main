@@ -17,6 +17,8 @@ GET http://localhost:5555/chairs/black
 
 ### GET
 GET http://localhost:5555/chairs?id=1
+Content-Type: application/json
+Accept: application/json
 Authorization: Bearer {{token}}
 
 ### POST LOGIN

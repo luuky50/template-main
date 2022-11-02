@@ -1,9 +1,11 @@
 
 <script>
+    export let params;
+
     let userEmail = "";
     let userPassword = "";
     const login = async () => {
-        await fetch("http://localhost:5555/auth", {
+        const response = await fetch("http://localhost:5555/auth", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -13,6 +15,9 @@
                 password: userPassword
             })
         })
+        if(!response.ok){
+            console.log(response.status + " " + response.statusText);
+        }
     }
 </script>
 
