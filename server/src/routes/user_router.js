@@ -17,16 +17,17 @@ router.post('/', async (req, res) => {
         if (!foundUser) {
             const secretCode = crypto.randomBytes(50).toString('hex');
             console.log("Making new user");
-            let user = {
+            const user = {
                 UUID: uuid.v4(),
                 username: req.body.username,
                 password: crypt.hashSync(req.body.password.toString(), crypt.genSaltSync()),
                 secret: secretCode
             }
             users.push(user);
-            res.end("New user made");
+            console.log("New user made");
+            res.send({logMessage: "New user made"});
         } else {
-            res.send("User already exists");
+            res.send({logMessage: "User already exists"});
         }
     }
 });

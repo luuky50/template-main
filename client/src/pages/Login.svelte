@@ -1,5 +1,8 @@
 
 <script>
+    import router from "page";
+    import {token, userId} from "../stores.js";
+
     export let params;
 
     let userEmail = "";
@@ -14,11 +17,21 @@
                 username: userEmail,
                 password: userPassword
             })
+        }).catch((error) =>{
+          console.log("There was a error while logging in: " + error);
         })
         if(!response.ok){
             console.log(response.status + " " + response.statusText);
         }
+        const text = await response.text();
+        userId.set(JSON.parse(text).id)
+        token.set(JSON.parse(text).token);
     }
+
+    function goToRegisterPage(){
+        router.redirect('/register')
+    }
+
 </script>
 
 
@@ -26,7 +39,8 @@
     Email<input bind:value={userEmail} type="text" name="userEmail">
     Password<input bind:value={userPassword} type="password" name="userPassword">
     <button on:click={login}>Login</button>
-</label> <br>
+    <button on:click={goToRegisterPage}>Register</button>
+</label>
 
 <style>
     #loginMenu{

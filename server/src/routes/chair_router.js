@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
 const checkToken = require("../middleware/token_check");
-let chair_router = require("../data/chair_data")
+const chair_router = require("../data/chair_data")
+const users = require("../data/user_data");
 router.use(bodyParser.json());
 
 router.get('/', (req, res) => {
@@ -45,10 +46,32 @@ router.get('/:id', (req, res) => {
     res.json(idResponse);
 })
 
+router.post('/bid', checkToken, (req, res) => {
+    let request = req.body;
+    if(!users.find(u => u.UUID === request.data.userId)){
+        return res.status(401).send({
+            errorMessage : "User not found"
+        })
+    }
+    let chairToBeChanged = chair_router.find(t => t.id === Number(request.data.chairId));
+    if(!chairToBeChanged){
+        return res.status(401).send({
+            errorMessage : "Chair not found"
+        })
+    }
+    let bid = {
+        userId: request.data.userId,
+        bidAmount: request.data.bidAmount,
+        date: request.data.date
+    }
+
+    chairToBeChanged.bids.push(bid);
+    res.send(bid);
+})
 
 router.post('/', (req, res) => {
     let response;
-    console.log(req.body);
+    console.log("Response in backend: " + req.body);
     if (req.body !== undefined) {
         response = {
             id: req.body.id,

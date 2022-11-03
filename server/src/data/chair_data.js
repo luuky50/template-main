@@ -1,54 +1,61 @@
-const express = require('express');
-
 module.exports =
 [
     {
         id: 1,
         name: "Super good",
+        description: "Insert",
         color: "red",
-        value: "#f00"
-
+        price: 200,
+        bids: [ ],
+        endsBy: "Time"
     },
     {
         id: 2,
         name: "With wheels",
+        description: "Insert",
         color: "green",
-        value: "#0f0"
+        price: "#0f0"
     },
     {
         id: 3,
         name: "What is this",
+        description: "Insert",
         color: "blue",
-        value: "#00f"
+        price: "#00f"
     },
     {
         id: 4,
         name: "No idea",
+        description: "Insert",
         color: "cyan",
-        value: "#0ff"
+        price: "#0ff"
     },
     {
         id: 5,
         name: "What a weird name",
+        description: "Insert",
         color: "magenta",
-        value: "#f0f"
+        price: "#f0f"
     },
     {
         id: 6,
         name: "ok",
+        description: "Insert",
         color: "yellow",
-        value: "#ff0"
+        price: "#ff0"
     },
     {
         id: 7,
         name: "second last one :D",
+        description: "Insert",
         color: "orange",
-        value: "#000"
+        price: "#000"
     },
     {
         id: 8,
         name: "last one :D",
+        description: "Insert",
         color: "purple",
-        value: "#000"
+        price: "200"
     }
 ]

@@ -1,11 +1,11 @@
 <script>
-  import logo from './assets/svelte.png'
   import router from 'page';
   import {currentChairId} from "./stores.js";
   import {currentRoute} from "./stores.js";
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
   import Login from "./pages/Login.svelte"
+  import Register from "./pages/Register.svelte"
   import Chairs from "./pages/Chairs.svelte"
   import Header from "./components/Header.svelte";
   import ChairInfo from "./pages/ChairInfo.svelte";
@@ -26,6 +26,10 @@
   });
   router('/login', (ctx) => {
     page = Login;
+    currentRoute.set(ctx.pathname);
+  });
+  router('/register', (ctx) => {
+    page = Register;
     currentRoute.set(ctx.pathname);
   });
   router('/chairs', (ctx) => {
