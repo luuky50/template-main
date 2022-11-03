@@ -6,7 +6,7 @@ let chair_router = require("../data/chair_data")
 router.use(bodyParser.json());
 
 router.get('/', (req, res) => {
-    console.log("In router");
+    console.log("In");
     // res.send('Hello World!')
     const filters = req.query;
     let chairs = [];
@@ -38,10 +38,11 @@ router.get('/', (req, res) => {
 // }
 
 
-router.get('/:color', (req, res) => {
-    const colorRequest = req.params.color;
-    const colorResponse = chair_router.filter(t => t.color === colorRequest);
-    res.json(colorResponse);
+router.get('/:id', (req, res) => {
+    const idRequest = req.params.id;
+    const idResponse = chair_router.find(t => t.id === Number(idRequest));
+    console.log(idResponse);
+    res.json(idResponse);
 })
 
 

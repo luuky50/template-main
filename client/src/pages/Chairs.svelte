@@ -1,6 +1,10 @@
 
 <script>
+    import router from "page";
+
     export let params;
+    import {currentChairId} from "../stores.js";
+    import {currentRoute} from "../stores.js";
 
     let chairs = [];
 
@@ -25,13 +29,21 @@
     }
     refreshChairs();
 
+    async function goToChair(chair_id){
+        await currentChairId.set(chair_id);
+        console.log($currentChairId);
+        router.redirect("/chairinfo");
+    }
+
+
 </script>
 
 <section>
 <ul id="chairs"{refreshChairs}>
     {#each chairs as chair}
-    <li id={chair.uuid} style="background-color: {chair.color}">{chair.name}
-        <button type="button" id="moreInfoButton">More info</button>
+    <li style="background-color: {chair.color}">{chair.name}
+        <button type="button" id="moreInfoButton"
+                on:click={() => goToChair(chair.id)}>More info</button>
     </li>
     {/each}
 </ul>

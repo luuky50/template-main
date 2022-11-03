@@ -1,34 +1,40 @@
 <script>
   import logo from './assets/svelte.png'
   import router from 'page';
-
+  import {currentChairId} from "./stores.js";
+  import {currentRoute} from "./stores.js";
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
   import Login from "./pages/Login.svelte"
   import Chairs from "./pages/Chairs.svelte"
   import Header from "./components/Header.svelte";
+  import ChairInfo from "./pages/ChairInfo.svelte";
 
 
 
   let page;
   let params;
-  let currentRoute;
+
 
   router('/', (ctx) => {
     page = Home;
-    currentRoute = ctx.pathname;
+    currentRoute.set(ctx.pathname);
   });
   router('/about', (ctx) => {
     page = About;
-    currentRoute = ctx.pathname;
+    currentRoute.set(ctx.pathname);
   });
   router('/login', (ctx) => {
     page = Login;
-    currentRoute = ctx.pathname;
+    currentRoute.set(ctx.pathname);
   });
   router('/chairs', (ctx) => {
     page = Chairs;
-    currentRoute = ctx.pathname;
+    currentRoute.set(ctx.pathname);
+  });
+  router('/chairinfo', (ctx) => {
+    page = ChairInfo;
+    currentRoute.set(ctx.pathname);
   });
 
   router.start();
@@ -36,9 +42,9 @@
 
 <main>
 <!--  <img src={logo} alt="Svelte Logo" />-->
-  <Header active={currentRoute} />
+  <Header active={$currentRoute} />
   <svelte:component this={page} {params} />
-
+  <a>{$currentChairId}</a>
 </main>
 
 <style>
