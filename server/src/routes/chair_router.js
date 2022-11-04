@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const checkToken = require("../middleware/token_check");
 const chair_router = require("../data/chair_data")
 const users = require("../data/user_data");
+const uuid = require("uuid");
 router.use(bodyParser.json());
 
 router.get('/', (req, res) => {
@@ -41,9 +42,10 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     const idRequest = req.params.id;
-    const idResponse = chair_router.find(t => t.id === Number(idRequest));
+    const idResponse = chair_router.find(t => t.id === idRequest);
     console.log(idResponse);
     res.json(idResponse);
+    //
 })
 
 router.post('/bid', checkToken, (req, res) => {
@@ -53,7 +55,7 @@ router.post('/bid', checkToken, (req, res) => {
             errorMessage : "User not found"
         })
     }
-    let chairToBeChanged = chair_router.find(t => t.id === Number(request.data.chairId));
+    let chairToBeChanged = chair_router.find(t => t.id === request.data.chairId);
     if(!chairToBeChanged){
         return res.status(401).send({
             errorMessage : "Chair not found"
@@ -69,14 +71,17 @@ router.post('/bid', checkToken, (req, res) => {
     res.send(bid);
 })
 
-router.post('/', (req, res) => {
+router.post('/', checkToken, (req, res) => {
     let response;
-    console.log("Response in backend: " + req.body);
+    console.log("Response in backend: " + JSON.stringify(req.body));
     if (req.body !== undefined) {
         response = {
-            id: req.body.id,
-            color: req.body.color,
-            value: req.body.value
+            id: uuid.v4(),
+            name: req.body.data.chairName,
+            description: req.body.data.chairDescription,
+            color: req.body.data.chairColor,
+            price: req.body.data.chairPrice,
+            endsBy: req.body.data.chairDate
         }
         console.log(response);
         chair_router.push(response);
@@ -86,8 +91,17 @@ router.post('/', (req, res) => {
     }
 })
 
-router.put('/', (req, res) => {
-
+router.put('/', checkToken,(req, res) => {
+    const request = req.body;
+    console.log("Response in backend: " + JSON.stringify(request));
+    const idResponseIndex = chair_router.findIndex(x => x.id === request.data.id);
+    if(idResponseIndex === -1){
+        return res.status(401).send({
+            errorMessage : "Chair not found"
+        })
+    }
+    console.log(idResponseIndex)
+    chair_router[idResponseIndex] = request.data;
 })
 
 router.delete('/:id', (req, res) => {

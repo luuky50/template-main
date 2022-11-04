@@ -30,7 +30,7 @@
             userId: $userId,
             chairId: $currentChairId,
             bidAmount: bidAmount,
-            date: date.getHours() + ":" +  date.getMinutes() + ":" + date.getSeconds() + " " +  date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear()
+            date: date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate()
         }
         console.log("Current token " + $token);
         console.log("New bid: " + JSON.stringify(data));

@@ -22,11 +22,12 @@
         if(!response.ok){
             return console.log(response.status + " " + response.statusText);
         }
+        router.redirect('/login')
         return response.json();
     }
 
     function goToLoginPage(){
-        router.redirect('/register')
+        router.redirect('/login')
     }
 
 </script>

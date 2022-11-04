@@ -1,7 +1,7 @@
 
 <script>
     import router from "page";
-    import {token, userId} from "../stores.js";
+    import {isAdmin, token, userId} from "../stores.js";
 
     export let params;
 
@@ -24,8 +24,10 @@
             console.log(response.status + " " + response.statusText);
         }
         const text = await response.text();
-        userId.set(JSON.parse(text).id)
-        token.set(JSON.parse(text).token);
+        await userId.set(JSON.parse(text).id)
+        await token.set(JSON.parse(text).token);
+        await isAdmin.set(JSON.parse(text).isAdmin)
+        router.redirect('/chairs')
     }
 
     function goToRegisterPage(){

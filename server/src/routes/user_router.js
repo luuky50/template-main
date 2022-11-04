@@ -21,8 +21,10 @@ router.post('/', async (req, res) => {
                 UUID: uuid.v4(),
                 username: req.body.username,
                 password: crypt.hashSync(req.body.password.toString(), crypt.genSaltSync()),
+                isAdmin: false,
                 secret: secretCode
             }
+            console.log(user);
             users.push(user);
             console.log("New user made");
             res.send({logMessage: "New user made"});

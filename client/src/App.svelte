@@ -48,7 +48,6 @@
 <!--  <img src={logo} alt="Svelte Logo" />-->
   <Header active={$currentRoute} />
   <svelte:component this={page} {params} />
-  <a>{$currentChairId}</a>
 </main>
 
 <style>
