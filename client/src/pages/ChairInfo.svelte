@@ -3,10 +3,12 @@
     let bidAmount = 0;
     import {currentChairId} from "../stores.js";
     import {userId} from "../stores.js";
+    import {userName} from "../stores.js";
     import {token} from "../stores.js";
 
 
     const GetChairById = async () => {
+        console.log(currentChair.bids);
         console.log($currentChairId);
         const response = await fetch("http://localhost:5555/chairs/" + $currentChairId, {
             method: 'GET',
@@ -16,23 +18,19 @@
             console.log(await response.text());
         }
         //console.log(await response.json());
-        return response.json();
+        currentChair = await response.json();
     }
 
-    async function refreshChair() {
-        currentChair = await GetChairById();
-        console.log(currentChair.bids);
-    }
     async function addBid() {
-        console.log(bidAmount)
+        console.log($userName)
         const date = new Date();
         const data = {
             userId: $userId,
+            userName: $userName,
             chairId: $currentChairId,
             bidAmount: bidAmount,
             date: date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate()
         }
-        console.log("Current token " + $token);
         console.log("New bid: " + JSON.stringify(data));
         const response = await fetch("http://localhost:5555/chairs/bid", {
             method: 'POST',
@@ -49,12 +47,27 @@
         }
         console.log("Posting bid");
         //console.log(await response.json());
-        await refreshChair();
+        await GetChairById();
         return response.json();
     }
+    async function deleteBid(chairId, bidId) {
+        const response = await fetch("http://localhost:5555/chairs/" + chairId + "/" + bidId, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + $token,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+        })
+        if (!response.ok) {
+            return console.log(await response.text());
+        }
+        await GetChairById()
+        return response.json();
 
-    refreshChair();
+    }
 
+    GetChairById();
 
 </script>
 
@@ -69,6 +82,10 @@
             {#if chair.bids}
                 {#each chair.bids as bid}
                     <li>
+                        {#if bid.userId === $userId}
+                            <button type="button" id="deleteBidButton" on:click={() => deleteBid(chair.id, bid.bidId)}>X</button>
+                        {/if}
+                        <div>{bid.userName}</div>
                         <div>{bid.bidAmount}</div>
                         <div>Creation date: {bid.date}</div>
                     </li>
@@ -87,20 +104,28 @@
         width: 400px;
         height: 500px;
         position: absolute;
+
         right: 0;
         border: solid 2px black;
+        list-style: none;
     }
     #addBid{
         top: 780px;
         position: absolute;
         right: 95px;
     }
+    #deleteBidButton{
+        display: block;
+        position: initial;
+    }
     #bidAmount{
         top: 780px;
         position: absolute;
         right: 160px;
     }
-    #bids{
-        list-style: none;
+    #bids li{
+        margin-bottom: 20px;
+        border: solid 2px black;
     }
+
 </style>

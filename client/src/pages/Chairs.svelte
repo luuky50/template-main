@@ -3,6 +3,7 @@
     import {currentChairId, isAdmin, token, filters} from "../stores.js";
     import ChairMenu from "../components/ChairMenu.svelte"
     import FilterSideBar from "../components/FilterSideBar.svelte";
+    import {createEventDispatcher} from "svelte";
 
     export let params;
     let chairs = [];
@@ -17,8 +18,8 @@
         chairDate: ""
     }
 
+
     const getChairs = async () => {
-        //TODO: Add filters
         const response = await fetch("http://localhost:5555/chairs/" + $filters, {
             method: 'GET',
             contentType: 'application/json',
@@ -27,8 +28,7 @@
             console.log(await response.text());
         }
         //console.log(await response.json());
-        return response.json();
-
+        chairs = await response.json();
     }
 
     const deleteChair = async (chairId) => {
@@ -40,12 +40,12 @@
             console.log(await response.text());
         }
         //console.log(await response.json());
-        return response.json();
-
+        console.log(await response.json());
+        await getChairs();
     }
 
     const createChair = async (data) => {
-      console.log(data);
+        console.log(data);
         const response = await fetch("http://localhost:5555/chairs", {
             method: 'POST',
             headers: {
@@ -53,7 +53,7 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ data })
+            body: JSON.stringify({data})
         })
         if (!response.ok) {
 
@@ -61,11 +61,11 @@
         }
         chairs.push(data);
         await response.json();
-        await refreshChairs()
+        await getChairs()
         toggleChairMenu()
     }
 
-    async function compareData(oldData, newData){
+    async function compareData(oldData, newData) {
         return {
             id: oldData.id,
             name: !newData.chairName ? oldData.name : newData.chairName,
@@ -89,22 +89,19 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ data })
+            body: JSON.stringify({data})
         })
         if (!response.ok) {
             return console.log(await response.text());
         }
         await response;
-        await refreshChairs()
+        await getChairs()
         toggleChairMenu()
     }
 
-    async function refreshChairs() {
-        chairs = await getChairs();
-        console.log(chairs);
-    }
+    filters.set("");
+    getChairs();
 
-    refreshChairs();
 
     async function goToChair(chair_id) {
         await currentChairId.set(chair_id);
@@ -134,7 +131,7 @@
             contentType: 'application/json',
         })
         if (!response.ok) {
-            console.log(await response.text());
+            return console.log(await response.text());
         }
         //console.log(await response.json());
         return response.json();
@@ -144,17 +141,18 @@
 </script>
 
 
-
 <section>
-    <FilterSideBar>
+    <FilterSideBar on:hasFilters={getChairs}>
 
     </FilterSideBar>
 
-    <ul id="chairs" {refreshChairs}>
+
+    <ul id="chairs" {getChairs}>
         {#each chairs as chair}
             <li style="background-color: {chair.color}">{chair.name}
                 {#if $isAdmin}
-                    <button type="button" id="editChairButton" on:click={() => enableEditChairMenu(chair.id)}>⚙️</button>
+                    <button type="button" id="editChairButton" on:click={() => enableEditChairMenu(chair.id)}>⚙️
+                    </button>
                     <button type="button" id="deleteChairButton" on:click={() => deleteChair(chair.id)}>X</button>
                 {/if}
                 <button
@@ -173,17 +171,23 @@
         {#await getChair(currentChairId)}
             <ChairMenu>
             </ChairMenu>
-            {:then oldChair}
-            <ChairMenu>
-                <button slot="cancelButton" class="cancelButton" on:click={toggleChairMenu}>X</button>
-                <h1 slot="title">Editing a chair auction</h1>
-                <input slot="chairName" placeholder={oldChair.name} bind:value={chairObject.chairName}>>
-                <input slot="chairDescription" placeholder={oldChair.description} bind:value={chairObject.chairDescription}>>
-                <input slot="chairColor" placeholder={oldChair.color} bind:value={chairObject.chairColor}>>
-                <input slot="chairPrice" type="number"placeholder={oldChair.price} bind:value={chairObject.chairPrice}>>
-                <input slot="chairDate"  type="text" placeholder={oldChair.endsBy} onfocus="(this.type = 'date')" id="date" bind:value={chairObject.chairDate}>>
-                <button slot="saveChair" type="button" on:click={() => saveChair(oldChair, chairObject)}>Save</button>
-            </ChairMenu>
+        {:then oldChair}
+            {#if oldChair}
+                <ChairMenu>
+                    <button slot="cancelButton" class="cancelButton" on:click={toggleChairMenu}>X</button>
+                    <h1 slot="title">Editing a chair auction</h1>
+                    <input slot="chairName" placeholder={oldChair.name} bind:value={chairObject.chairName}>>
+                    <input slot="chairDescription" placeholder={oldChair.description}
+                           bind:value={chairObject.chairDescription}>>
+                    <input slot="chairColor" placeholder={oldChair.color} bind:value={chairObject.chairColor}>>
+                    <input slot="chairPrice" type="number" placeholder={oldChair.price}
+                           bind:value={chairObject.chairPrice}>>
+                    <input slot="chairDate" type="text" placeholder={oldChair.endsBy} onfocus="(this.type = 'date')"
+                           id="date" bind:value={chairObject.chairDate}>>
+                    <button slot="saveChair" type="button" on:click={() => saveChair(oldChair, chairObject)}>Save
+                    </button>
+                </ChairMenu>
+            {/if}
         {/await}
     {:else if showChair & !isEditChair}
         <ChairMenu>
@@ -193,7 +197,7 @@
             <input slot="chairDescription" placeholder="" bind:value={chairObject.chairDescription}>
             <input slot="chairColor" placeholder="" bind:value={chairObject.chairColor}>
             <input slot="chairPrice" type="number" placeholder="" bind:value={chairObject.chairPrice}>
-            <input slot="chairDate" type="date"  placeholder="" bind:value={chairObject.chairDate}>
+            <input slot="chairDate" type="date" placeholder="" bind:value={chairObject.chairDate}>
             <button slot="saveChair" type="button" on:click={() => createChair(chairObject)}>Create</button>
         </ChairMenu>
     {/if}
@@ -203,12 +207,13 @@
 
 <style>
 
-    .cancelButton{
+    .cancelButton {
         display: block;
         position: absolute;
         right: 0;
         top: 0;
     }
+
     section {
         width: 100vw;
         display: flex;

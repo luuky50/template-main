@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
                             role: foundUser.UUID
                         },
                         foundUser.secret);
-                    res.send({token: token, id: foundUser.UUID, isAdmin: foundUser.isAdmin});
+                    res.send({token: token, id: foundUser.UUID,username: foundUser.username, isAdmin: foundUser.isAdmin});
                 } else {
                     res.status(401).send("Password is wrong");
                 }

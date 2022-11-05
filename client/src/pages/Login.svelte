@@ -1,7 +1,7 @@
 
 <script>
     import router from "page";
-    import {isAdmin, token, userId} from "../stores.js";
+    import {isAdmin, token, userId, userName} from "../stores.js";
 
     export let params;
 
@@ -25,6 +25,7 @@
         }
         const text = await response.text();
         await userId.set(JSON.parse(text).id)
+        await userName.set(JSON.parse(text).username)
         await token.set(JSON.parse(text).token);
         await isAdmin.set(JSON.parse(text).isAdmin)
         router.redirect('/chairs')

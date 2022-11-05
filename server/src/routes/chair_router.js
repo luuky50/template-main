@@ -8,16 +8,18 @@ const uuid = require("uuid");
 router.use(bodyParser.json());
 
 router.get('/', (req, res) => {
-    console.log("In");
     // res.send('Hello World!')
     const filters = req.query;
+    console.log(filters);
     let chairs = [];
     if (filters !== undefined && filters !== null) {
-        chairs = chair_router.filter(item =>
-            Object.
-            entries(filters).
-            every(([filter, value]) => item[filter].toString() === value.toString())
-        );
+        if(!filters.search) {
+            chairs = chair_router.filter(item =>
+                Object.entries(filters).every(([filter, value]) => item[filter].toString() === value.toString())
+            );
+        }else{
+            chairs = chair_router.filter(item => item.name.includes(filters.search));
+        }
         console.log(chairs);
         res.json(chairs);
         return;
@@ -44,8 +46,13 @@ router.get('/:id', (req, res) => {
     const idRequest = req.params.id;
     const idResponse = chair_router.find(t => t.id === idRequest);
     console.log(idResponse);
-    res.json(idResponse);
-    //
+    if(!idResponse){
+        return res.status(401).send({
+            errorMessage : "Chair not found"
+        })
+    }else {
+        res.json(idResponse);
+    }
 })
 
 router.post('/bid', checkToken, (req, res) => {
@@ -62,6 +69,8 @@ router.post('/bid', checkToken, (req, res) => {
         })
     }
     let bid = {
+        bidId: uuid.v4(),
+        userName: request.data.userName,
         userId: request.data.userId,
         bidAmount: request.data.bidAmount,
         date: request.data.date
@@ -69,6 +78,25 @@ router.post('/bid', checkToken, (req, res) => {
 
     chairToBeChanged.bids.push(bid);
     res.send(bid);
+})
+
+router.delete('/:chairId/:bidId', checkToken, (req, res) => {
+    const bidId = req.params.bidId;
+    const chairId = req.params.chairId;
+    console.log(chairId)
+    const chairRequest = chair_router.findIndex(x => x.id === chairId);
+    if(chairRequest === -1){
+        return res.status(401).send({
+            errorMessage : "Chair not found"
+        })
+    }
+    const bidRequest = chair_router[chairRequest].bids.findIndex(bid => bid.bidId === bidId)
+    if(bidRequest === -1){
+        return res.status(401).send({
+            errorMessage : "Bid not found"
+        })
+    }
+    chair_router[chairRequest].bids.splice(bidRequest, 1);
 })
 
 router.post('/', checkToken, (req, res) => {
@@ -107,19 +135,20 @@ router.put('/', checkToken,(req, res) => {
 router.delete('/:id', (req, res) => {
     const idRequest = req.params.id;
     console.log(req.params.id);
-    const idResponseIndex = chair_router.findIndex(x => x.id === parseInt(idRequest));
+    const idResponseIndex = chair_router.findIndex(x => x.id === idRequest);
     console.log(idResponseIndex);
     if (idResponseIndex !== -1) {
         chair_router.splice(idResponseIndex, 1)
         for (const item of chair_router) {
             console.log(item);
         }
-        res.send("Chair with id: " + idRequest + " is going to be deleted");
+        res.send({
+            logMessage: "Chair with id " + idRequest + " is going to be deleted"});
     } else {
-        throw new Error("ID doesn't exist");
+        return res.status(401).send({
+            errorMessage : "Chair not found"
+        })
     }
-
-
 })
 
 module.exports = router;

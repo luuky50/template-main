@@ -4,6 +4,8 @@ export const currentChairId = writable(0);
 
 export const userId = writable(null);
 
+export const userName = writable("");
+
 export const currentRoute = writable("/");
 
 export const isAdmin = writable(false);

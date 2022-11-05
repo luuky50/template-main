@@ -7,7 +7,7 @@ module.exports =
             color: "red",
             price: 200,
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: 'af25a3d0-5827-47a7-9324-2f32b6473f84',
@@ -16,7 +16,7 @@ module.exports =
             color: "green",
             price: "#0f0",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: '59b43878-e250-4774-951b-3a7f0c74600a',
@@ -25,7 +25,7 @@ module.exports =
             color: "blue",
             price: "#00f",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: 'c8ebbb85-fca6-48a0-b512-8021839f433f',
@@ -34,7 +34,7 @@ module.exports =
             color: "cyan",
             price: "#0ff",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: '31d016e8-46b2-4267-adb1-bcd025e993bb',
@@ -43,7 +43,7 @@ module.exports =
             color: "magenta",
             price: "#f0f",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: '58e2e693-c1ec-4f6f-8e76-d37110fcc637',
@@ -52,7 +52,7 @@ module.exports =
             color: "yellow",
             price: "#ff0",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: '17311b19-58ec-4dc3-abbd-60652384f8d6',
@@ -61,7 +61,7 @@ module.exports =
             color: "orange",
             price: "#000",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         },
         {
             id: 'b2bb7d0e-676c-4e8b-8b56-a408694a1aa1',
@@ -70,6 +70,6 @@ module.exports =
             color: "purple",
             price: "200",
             bids: [],
-            endsBy: "4-11-2022"
+            endsBy: "2022-11-04"
         }
     ]
