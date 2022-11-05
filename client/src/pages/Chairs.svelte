@@ -1,7 +1,8 @@
 <script>
     import router from "page";
-    import {currentChairId, isAdmin, token} from "../stores.js";
+    import {currentChairId, isAdmin, token, filters} from "../stores.js";
     import ChairMenu from "../components/ChairMenu.svelte"
+    import FilterSideBar from "../components/FilterSideBar.svelte";
 
     export let params;
     let chairs = [];
@@ -17,7 +18,8 @@
     }
 
     const getChairs = async () => {
-        const response = await fetch("http://localhost:5555/chairs", {
+        //TODO: Add filters
+        const response = await fetch("http://localhost:5555/chairs/" + $filters, {
             method: 'GET',
             contentType: 'application/json',
         })
@@ -58,7 +60,9 @@
             return console.log(await response.text());
         }
         chairs.push(data);
-        return response.json();
+        await response.json();
+        await refreshChairs()
+        toggleChairMenu()
     }
 
     async function compareData(oldData, newData){
@@ -67,7 +71,7 @@
             name: !newData.chairName ? oldData.name : newData.chairName,
             description: !newData.chairDescription ? oldData.description : newData.chairDescription,
             color: !newData.chairColor ? oldData.color : newData.chairColor,
-            price: newData.chairPrice !== 0 ? oldData.price : newData.chairPrice,
+            price: newData.chairPrice === 0 ? oldData.price : newData.chairPrice,
             bids: oldData.bids,
             endsBy: !newData.chairDate ? oldData.endsBy : newData.chairDate
         };
@@ -88,12 +92,11 @@
             body: JSON.stringify({ data })
         })
         if (!response.ok) {
-
             return console.log(await response.text());
         }
-        //chairs.map(oldData.id, data);
-        return response.json();
-
+        await response;
+        await refreshChairs()
+        toggleChairMenu()
     }
 
     async function refreshChairs() {
@@ -140,7 +143,13 @@
 
 </script>
 
+
+
 <section>
+    <FilterSideBar>
+
+    </FilterSideBar>
+
     <ul id="chairs" {refreshChairs}>
         {#each chairs as chair}
             <li style="background-color: {chair.color}">{chair.name}
@@ -204,7 +213,6 @@
         width: 100vw;
         display: flex;
         position: relative;
-        justify-content: center;
     }
 
     #chairs {
@@ -215,6 +223,7 @@
         flex-flow: row;
         flex-wrap: wrap;
         list-style: none;
+        margin-left: 200px
     }
 
     #moreInfoButton {

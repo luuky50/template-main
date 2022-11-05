@@ -24,6 +24,7 @@
     <slot name="saveChair"></slot>
 </section>
 
+
 <style>
     .chair{
         display: flex;
