@@ -141,36 +141,29 @@
 </script>
 
 
-<section>
-    <FilterSideBar on:hasFilters={getChairs}>
-
-    </FilterSideBar>
-
-
-    <ul id="chairs" {getChairs}>
+<div class="container">
+    <FilterSideBar on:hasFilters={getChairs} />
+    <div class="chairs-grid" {getChairs}>
         {#each chairs as chair}
-            <li style="background-color: {chair.color}">{chair.name}
+            <div class="chair" style="background-color: {chair.color}">
                 {#if $isAdmin}
-                    <button type="button" id="editChairButton" on:click={() => enableEditChairMenu(chair.id)}>⚙️
-                    </button>
-                    <button type="button" id="deleteChairButton" on:click={() => deleteChair(chair.id)}>X</button>
+                    <div class="admin-buttons-container">
+                        <button class="admin-button" on:click={() => enableEditChairMenu(chair.id)}>⚙️</button>
+                        <button class="admin-button" on:click={() => deleteChair(chair.id)}>❌</button>
+                    </div>
                 {/if}
-                <button
-                        type="button" id="moreInfoButton" on:click={() => goToChair(chair.id)}>More info
-                </button>
-            </li>
+                <span>{chair.name}</span>
+                <button class="more-info-button" on:click={() => goToChair(chair.id)}>More info</button>
+            </div>
         {/each}
         {#if $isAdmin}
-            <li style="background-color: {'grey'}">
-                <button id="addChairButton" on:click={enableCreateChairMenu}>+</button>
-            </li>
+            <button class="add-chair-button" on:click={enableCreateChairMenu}>+</button>
         {/if}
-    </ul>
+    </div>
 
     {#if showChair && isEditChair}
         {#await getChair(currentChairId)}
-            <ChairMenu>
-            </ChairMenu>
+            <ChairMenu/>
         {:then oldChair}
             {#if oldChair}
                 <ChairMenu>
@@ -202,10 +195,58 @@
         </ChairMenu>
     {/if}
 
-</section>
+</div>
 
 
 <style>
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 4fr;
+    }
+
+    .chairs-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        padding: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+
+        .chairs-grid {
+            justify-content: center;
+        }
+    }
+
+    .chair {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 300px;
+        width: 300px;
+        border: 1px solid black;
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .admin-buttons-container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .admin-button {
+        border: none;
+        background-color: transparent;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+    }
 
     .cancelButton {
         display: block;
@@ -214,55 +255,29 @@
         top: 0;
     }
 
-    section {
-        width: 100vw;
-        display: flex;
-        position: relative;
+    .more-info-button {
+        border-radius: 1rem;
+        font-size: 1rem;
+        padding: 1rem;
+        cursor: pointer;
     }
 
-    #chairs {
-        display: flex;
-        position: relative;
-        margin-inline: 0;
-        padding: 0;
-        flex-flow: row;
-        flex-wrap: wrap;
-        list-style: none;
-        margin-left: 200px
+    .more-info-button:hover {
+        background-color: #444;
+        color: white;
+        transition: all 0.2s ease-in-out;
     }
 
-    #moreInfoButton {
-        display: block;
-        position: absolute;
-        bottom: 0;
-        left: 33%;
-
-    }
-
-    #chairs li {
-        position: relative;
-        margin: 10px;
-        width: 200px;
-        height: 200px;
-    }
-
-    #addChairButton {
-        width: 100%;
-        height: 100%;
-        font-size: 100px;
-    }
-
-    #deleteChairButton {
-        display: block;
-        position: absolute;
-        right: 0;
-        top: 0;
-    }
-
-    #editChairButton {
-        display: block;
-        position: absolute;
-        left: 0;
-        top: 0;
+    .add-chair-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        height: 50px;
+        width: 50px;
+        border-radius: 100%;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 24px;
+        font-weight: bold;
     }
 </style>

@@ -38,18 +38,40 @@
 </script>
 
 
-<label id="loginMenu">
-    Email<input bind:value={userEmail} type="text" name="userEmail">
-    Password<input bind:value={userPassword} type="password" name="userPassword">
-    <button on:click={login}>Login</button>
-    <button on:click={goToRegisterPage}>Register</button>
-</label>
+<div class="login">
+    <h1>Login</h1>
+    <input class="login-input" type="text" placeholder="Email" bind:value={userEmail}>
+    <input class="login-input" type="password" placeholder="Password" bind:value={userPassword}>
+    <button class="login-button" on:click={login}>Login</button>
+    <button class="login-button" on:click={goToRegisterPage}>Register</button>
+</div>
 
 <style>
-    #loginMenu{
+    .login {
         display: flex;
-        flex-flow: column;
+        flex-direction: column;
         align-items: center;
+        height: 100vh;
+    }
+
+    .login-input {
+        width: 300px;
+        height: 40px;
+        margin: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    .login-button {
+        cursor: pointer;
+        width: 300px;
+        height: 40px;
+        margin: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background-color: #ccc;
     }
 </style>
 

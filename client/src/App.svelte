@@ -1,13 +1,12 @@
 <script>
   import router from 'page';
-  import {currentChairId} from "./stores.js";
   import {currentRoute} from "./stores.js";
   import Home from "./pages/Home.svelte";
   import About from "./pages/About.svelte";
   import Login from "./pages/Login.svelte"
   import Register from "./pages/Register.svelte"
   import Chairs from "./pages/Chairs.svelte"
-  import Header from "./components/Header.svelte";
+  import Header from "./components/NavBar.svelte";
   import ChairInfo from "./pages/ChairInfo.svelte";
 
 
@@ -45,7 +44,6 @@
 </script>
 
 <main>
-<!--  <img src={logo} alt="Svelte Logo" />-->
   <Header active={$currentRoute} />
   <svelte:component this={page} {params} />
 </main>
@@ -55,15 +53,4 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
-
-  main {
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    height: 100vw;
-    overflow-x: hidden;
-  }
-
-
-
 </style>
