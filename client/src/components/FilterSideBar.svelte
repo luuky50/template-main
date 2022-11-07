@@ -1,9 +1,7 @@
-<script>
-    import {filters} from "../stores.js";
-    import router from "page";
-    import {createEventDispatcher} from "svelte";
 
-    let colors = [];
+<script>
+    import {filters, colors} from "../stores.js";
+    import {createEventDispatcher} from "svelte";
     let selectedColor;
     let selectedPrice;
     let selectedEndsBy;
@@ -11,29 +9,28 @@
 
     const dispatch = createEventDispatcher();
 
-    function addFilters(isFilter) {
+    function addFilters(isFilter){
         filters.set("?");
-        if (isFilter) {
+        if(isFilter) {
             if (selectedColor !== "all") {
                 filters.update(f => f + "color" + "=" + selectedColor)
-                if (selectedPrice)
+                if(selectedPrice)
                     filters.update(f => f + "&")
             }
             if (selectedPrice) {
                 filters.update(f => f + "price" + "=" + selectedPrice)
-                if (selectedEndsBy)
+                if(selectedEndsBy)
                     filters.update(f => f + "&")
             }
             if (selectedEndsBy) {
                 filters.update(f => f + "endsBy" + "=" + selectedEndsBy)
             }
-        } else {
-            if (searchTerm) {
-                filters.update(f => f + "search" + "=" + searchTerm)
+        }else{
+            if(searchTerm){
+                filters.update(f => f +  "search" + "=" + searchTerm)
             }
         }
         dispatch('hasFilters');
-        console.log($filters);
     }
 
 
@@ -45,11 +42,10 @@
     <div class="form-group">
         <label class="input-label" for="color-picker">Color picker:</label>
         <select class="color-picker" id="color-picker" bind:value={selectedColor}>
-            <!--{#each colors as color}-->
             <option selected="selected">all</option>
-            <option>orange</option>
-            <option>red</option>
-            <!--{/each}-->
+            {#each colors as color}
+            <option>{color}</option>
+            {/each}
         </select>
     </div>
 

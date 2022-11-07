@@ -16,7 +16,6 @@ router.post('/', async (req, res) => {
         const foundUser = users.find(u => u.username === req.body.username);
         if (!foundUser) {
             const secretCode = crypto.randomBytes(50).toString('hex');
-            console.log("Making new user");
             const user = {
                 UUID: uuid.v4(),
                 username: req.body.username,
@@ -24,18 +23,19 @@ router.post('/', async (req, res) => {
                 isAdmin: false,
                 secret: secretCode
             }
-            console.log(user);
+            const token = jwt.sign({
+                    username: user.username,
+                    role: user.UUID
+                },
+                user.secret);
             users.push(user);
-            console.log("New user made");
-            res.send({logMessage: "New user made"});
+            res.send({logMessage: "New user made", token: token, id: user.UUID, username: user.username});
         } else {
-            res.send({logMessage: "User already exists"});
+            return res.status(401).send({
+                errorMessage: "User already exists"
+            })
         }
     }
-});
-
-router.get('/', checkToken, async (req, res) =>{
-    res.send("It's done");
 });
 
 module.exports = router;

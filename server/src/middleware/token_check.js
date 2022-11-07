@@ -2,9 +2,9 @@ const jwt = require("jsonwebtoken");
 const users = require("../data/user_data");
 
 const checkToken = (req, res, next) => {
-    console.log("In checktoken");
+    //console.log("In checktoken");
     const auth = req.headers['authorization'];
-    console.log("Auth: " + auth);
+    //console.log("Auth: " + auth);
     if(!auth){
         return res.status(400).send({
             errorMessage : "Authorization header is not added to the request"

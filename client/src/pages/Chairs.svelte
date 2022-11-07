@@ -1,21 +1,19 @@
 <script>
     import router from "page";
-    import {currentChairId, isAdmin, token, filters} from "../stores.js";
+    import {currentChairId, isAdmin, token, filters, colors} from "../stores.js";
     import ChairMenu from "../components/ChairMenu.svelte"
     import FilterSideBar from "../components/FilterSideBar.svelte";
-    import {createEventDispatcher} from "svelte";
 
-    export let params;
     let chairs = [];
     let showChair = false;
     let isEditChair = false;
 
     let chairObject = {
-        chairName: "",
-        chairDescription: "",
-        chairColor: "",
-        chairPrice: 0,
-        chairDate: ""
+        name: "",
+        description: "",
+        color: "",
+        price: 0,
+        endsBy: ""
     }
 
 
@@ -25,27 +23,26 @@
             contentType: 'application/json',
         })
         if (!response.ok) {
-            console.log(await response.text());
+            return alert(await response.text());
         }
-        //console.log(await response.json());
         chairs = await response.json();
     }
 
     const deleteChair = async (chairId) => {
+        if(!chairId){
+            return alert({errorMessage: "ChairId is " + chairId});
+        }
         const response = await fetch("http://localhost:5555/chairs/" + chairId, {
             method: 'DELETE',
             contentType: 'application/json',
         })
         if (!response.ok) {
-            console.log(await response.text());
+            return alert(await response.text());
         }
-        //console.log(await response.json());
-        console.log(await response.json());
         await getChairs();
     }
 
     const createChair = async (data) => {
-        console.log(data);
         const response = await fetch("http://localhost:5555/chairs", {
             method: 'POST',
             headers: {
@@ -57,10 +54,10 @@
         })
         if (!response.ok) {
 
-            return console.log(await response.text());
+            return alert(await response.text());
         }
+        console.log(await response.json())
         chairs.push(data);
-        await response.json();
         await getChairs()
         toggleChairMenu()
     }
@@ -68,19 +65,18 @@
     async function compareData(oldData, newData) {
         return {
             id: oldData.id,
-            name: !newData.chairName ? oldData.name : newData.chairName,
-            description: !newData.chairDescription ? oldData.description : newData.chairDescription,
-            color: !newData.chairColor ? oldData.color : newData.chairColor,
-            price: newData.chairPrice === 0 ? oldData.price : newData.chairPrice,
+            name: !newData.name ? oldData.name : newData.name,
+            description: !newData.description ? oldData.description : newData.description,
+            color: !newData.color ? oldData.color : newData.color,
+            price: newData.price === 0 ? oldData.price : newData.price,
             bids: oldData.bids,
-            endsBy: !newData.chairDate ? oldData.endsBy : newData.chairDate
+            endsBy: !newData.endsBy ? oldData.endsBy : newData.endsBy
         };
     }
 
     const saveChair = async (oldData, newData) => {
-        let data = []
+        let data;
         data = await compareData(oldData, newData);
-        console.log(data);
         const response = await fetch("http://localhost:5555/chairs/", {
             method: 'PUT',
             mode: "cors",
@@ -92,9 +88,9 @@
             body: JSON.stringify({data})
         })
         if (!response.ok) {
-            return console.log(await response.text());
+            return alert(await response.text());
         }
-        await response;
+        console.log(await response.json())
         await getChairs()
         toggleChairMenu()
     }
@@ -104,8 +100,10 @@
 
 
     async function goToChair(chair_id) {
+        if(!chair_id){
+            return alert({errorMessage: "ChairId is " + chair_id});
+        }
         await currentChairId.set(chair_id);
-        console.log($currentChairId);
         router.redirect("/chairinfo");
     }
 
@@ -119,21 +117,25 @@
     }
 
     async function enableEditChairMenu(id) {
+        if(!id){
+            alert("Chair with " + id + " doesn't exist");
+        }
         await currentChairId.set(id);
         isEditChair = true;
         toggleChairMenu();
     }
 
-    async function getChair() {
-        console.log($currentChairId);
+    async function getChairWithId() {
+        if(!$currentChairId){
+            alert("Current chair doesn't have a valid id: " + $currentChairId)
+        }
         const response = await fetch("http://localhost:5555/chairs/" + $currentChairId, {
             method: 'GET',
             contentType: 'application/json',
         })
         if (!response.ok) {
-            return console.log(await response.text());
+            return alert(await response.text());
         }
-        //console.log(await response.json());
         return response.json();
     }
 
@@ -162,21 +164,26 @@
     </div>
 
     {#if showChair && isEditChair}
-        {#await getChair(currentChairId)}
+        {#await getChairWithId(currentChairId)}
             <ChairMenu/>
         {:then oldChair}
             {#if oldChair}
                 <ChairMenu>
                     <button slot="cancelButton" class="cancelButton" on:click={toggleChairMenu}>X</button>
                     <h1 slot="title">Editing a chair auction</h1>
-                    <input slot="chairName" placeholder={oldChair.name} bind:value={chairObject.chairName}>>
+                    <input slot="chairName" placeholder={oldChair.name} bind:value={chairObject.name}>>
                     <input slot="chairDescription" placeholder={oldChair.description}
-                           bind:value={chairObject.chairDescription}>>
-                    <input slot="chairColor" placeholder={oldChair.color} bind:value={chairObject.chairColor}>>
+                           bind:value={chairObject.description}>>
+                    <select slot="chairColor" bind:value={chairObject.color}>
+                        <option selected="selected">none</option>
+                        {#each colors as color}
+                        <option>{color}</option>
+                        {/each}
+                    </select>
                     <input slot="chairPrice" type="number" placeholder={oldChair.price}
-                           bind:value={chairObject.chairPrice}>>
+                           bind:value={chairObject.price}>>
                     <input slot="chairDate" type="text" placeholder={oldChair.endsBy} onfocus="(this.type = 'date')"
-                           id="date" bind:value={chairObject.chairDate}>>
+                           id="date" bind:value={chairObject.endsBy}>>
                     <button slot="saveChair" type="button" on:click={() => saveChair(oldChair, chairObject)}>Save
                     </button>
                 </ChairMenu>
@@ -186,11 +193,16 @@
         <ChairMenu>
             <button slot="cancelButton" class="cancelButton" on:click={toggleChairMenu}>X</button>
             <h1 slot="title">Creating a new chair auction</h1>
-            <input slot="chairName" placeholder="" bind:value={chairObject.chairName}>
-            <input slot="chairDescription" placeholder="" bind:value={chairObject.chairDescription}>
-            <input slot="chairColor" placeholder="" bind:value={chairObject.chairColor}>
-            <input slot="chairPrice" type="number" placeholder="" bind:value={chairObject.chairPrice}>
-            <input slot="chairDate" type="date" placeholder="" bind:value={chairObject.chairDate}>
+            <input slot="chairName" placeholder="" bind:value={chairObject.name}>
+            <input slot="chairDescription" placeholder="" bind:value={chairObject.description}>
+            <select slot="chairColor" bind:value={chairObject.color}>
+                <option selected="selected">none</option>
+                {#each colors as color}
+                    <option>{color}</option>
+                {/each}
+            </select>
+            <input slot="chairPrice" type="number" placeholder="" bind:value={chairObject.price}>
+            <input slot="chairDate" type="date" placeholder="" bind:value={chairObject.endsBy}>
             <button slot="saveChair" type="button" on:click={() => createChair(chairObject)}>Create</button>
         </ChairMenu>
     {/if}
@@ -250,9 +262,7 @@
 
     .cancelButton {
         display: block;
-        position: absolute;
-        right: 0;
-        top: 0;
+        position: relative;
     }
 
     .more-info-button {

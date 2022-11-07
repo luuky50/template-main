@@ -8,30 +8,41 @@
 
 
     const GetChairById = async () => {
-        console.log(currentChair.bids);
-        console.log($currentChairId);
+        if(!$currentChairId){
+            alert("Current chair doesn't have a valid id: " + $currentChairId)
+        }
         const response = await fetch("http://localhost:5555/chairs/" + $currentChairId, {
             method: 'GET',
             contentType: 'application/json',
         })
         if (!response.ok) {
-            console.log(await response.text());
+            return alert(await response.text());
         }
-        //console.log(await response.json());
         currentChair = await response.json();
     }
 
     async function addBid() {
-        console.log($userName)
+        if(bidAmount <= 0){
+            return alert({ errorMessage:"Bid can't be equal or lower than 0"})
+        }
+        if(!$userId){
+            return alert({errorMessage: "UserId is " + $userId});
+        }
+        if(!$userName){
+            return alert({errorMessage: "UserName is " + $userName});
+        }
+        if(!$currentChairId){
+            return alert({errorMessage: "CurrentChairId is " + $currentChairId});
+        }
+
         const date = new Date();
         const data = {
             userId: $userId,
             userName: $userName,
             chairId: $currentChairId,
             bidAmount: bidAmount,
-            date: date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate()
+            date: date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate()
         }
-        console.log("New bid: " + JSON.stringify(data));
         const response = await fetch("http://localhost:5555/chairs/bid", {
             method: 'POST',
             headers: {
@@ -39,18 +50,24 @@
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ data })
+            body: JSON.stringify({data})
         })
         if (!response.ok) {
 
-            return console.log(await response.text());
+            return alert(await response.text());
         }
-        console.log("Posting bid");
-        //console.log(await response.json());
+        await response.json();
         await GetChairById();
-        return response.json();
+
     }
+
     async function deleteBid(chairId, bidId) {
+        if(!chairId){
+            return alert({errorMessage: "ChairId id is " + chairId});
+        }
+        if(!bidId){
+            return alert({errorMessage: "BidId id is " + bidId});
+        }
         const response = await fetch("http://localhost:5555/chairs/" + chairId + "/" + bidId, {
             method: 'DELETE',
             headers: {
@@ -60,10 +77,10 @@
             },
         })
         if (!response.ok) {
-            return console.log(await response.text());
+            return alert(await response.text());
         }
+        await response.json();
         await GetChairById()
-        return response.json();
 
     }
 
@@ -77,13 +94,17 @@
         <h1>Loading..</h1>
     {:then chair}
         <h1 id="chairName">{chair.name}</h1>
-        <h1 id="chairPrice">{chair.price}</h1>
+        <h1 id="chairPrice">Starting price: {chair.price}</h1>
+        <h1 id="chairEndDate">Ends on: {chair.endsBy}</h1>
+        <div id="chairDescription">Description: {chair.description}</div>
         <ul id="bids">Bids:
             {#if chair.bids}
                 {#each chair.bids as bid}
                     <li>
                         {#if bid.userId === $userId}
-                            <button type="button" id="deleteBidButton" on:click={() => deleteBid(chair.id, bid.bidId)}>X</button>
+                            <button type="button" id="deleteBidButton" on:click={() => deleteBid(chair.id, bid.bidId)}>
+                                X
+                            </button>
                         {/if}
                         <div>{bid.userName}</div>
                         <div>{bid.bidAmount}</div>
@@ -109,21 +130,25 @@
         border: solid 2px black;
         list-style: none;
     }
-    #addBid{
+
+    #addBid {
         top: 780px;
         position: absolute;
         right: 95px;
     }
-    #deleteBidButton{
+
+    #deleteBidButton {
         display: block;
         position: initial;
     }
-    #bidAmount{
+
+    #bidAmount {
         top: 780px;
         position: absolute;
         right: 160px;
     }
-    #bids li{
+
+    #bids li {
         margin-bottom: 20px;
         border: solid 2px black;
     }
